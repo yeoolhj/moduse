@@ -1,0 +1,17 @@
+{
+  "name": "moduse",
+  "version": "0.0.1",
+  "description": "a modular development framework of hooks/compostion style",
+  "main": "index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "module"
+  ],
+  "author": "yeoolhj",
+  "license": "MIT",
+  "dependencies": {
+    "lodash": "^4.17.21"
+  }
+}

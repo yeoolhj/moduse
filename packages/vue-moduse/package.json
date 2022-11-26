@@ -1,0 +1,19 @@
+{
+  "name": "vue-moduse",
+  "version": "0.0.1",
+  "description": "use moduse with composition function in vue",
+  "main": "index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "hooks",
+    "composition",
+    "module"
+  ],
+  "author": "yeoolhj",
+  "license": "ISC",
+  "dependencies": {
+    "moduse": "^0.0.0"
+  }
+}
