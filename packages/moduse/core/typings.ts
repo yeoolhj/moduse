@@ -6,7 +6,9 @@ export type OptionsPick<T extends ModuleRoot, K> = K extends keyof T
       [name in keyof Omit<T, "use" | "createUse">]?: Partial<T[name]>;
     };
 
-export type DefineType<T> = { [name: string]: T };
+export interface DefineType<T> {
+  [name: string]: T;
+}
 
 export type DefineItem<T> = T extends DefineType<infer R> ? R : never;
 

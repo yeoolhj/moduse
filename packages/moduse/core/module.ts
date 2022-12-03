@@ -15,20 +15,24 @@ export class ModuleRoot {
 
   protected use<T extends DefineType<unknown>>(
     this: ModuleRoot,
-    defineName: string,
-    defines: T | T[],
-    handle?: typeof useDefineHandle
+    defines: (T & ThisType<this>) | T[],
+    options?: {
+      createOptionsKey?: string;
+      handle?: typeof useDefineHandle;
+    }
   ): UnionToIntersectionType<T> {
-    return useDefine.call(this, defineName, defines, handle);
+    return useDefine.call(this, defines, options);
   }
 
   protected createUse<This extends ModuleRoot, K extends keyof This>(
     this: This,
-    defineName: K,
-    handle?: (item: [string, DefineItem<This[K]>]) => any
+    createOptionsKey: K,
+    options: {
+      handle?: (item: [string, DefineItem<This[K]>]) => any;
+    } = {}
   ) {
     return <T extends DefineType<unknown>>(defines: T | T[]) => {
-      return this.use(defineName, defines, handle as any);
+      return this.use(defines, { createOptionsKey, ...(options as any) });
     };
   }
 }

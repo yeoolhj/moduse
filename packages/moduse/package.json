@@ -1,17 +1,25 @@
 {
   "name": "moduse",
-  "version": "0.0.1",
-  "description": "a modular development framework of hooks/compostion style",
+  "version": "0.0.2",
+  "description": "A scheme based on typescript to provide modular encapsulation of model layer in Model-View-ViewModel(MVVM) pattern",
   "main": "index.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
+    "mvvm",
+    "model",
     "module"
   ],
-  "author": "yeoolhj",
-  "license": "MIT",
   "dependencies": {
     "lodash": "^4.17.21"
-  }
+  },
+  "author": "yeoolhj",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yeoolhj/moduse.git",
+    "directory": "packages/moduse"
+  },
+  "bugs": "https://github.com/yeoolhj/moduse/issues",
+  "license": "MIT"
 }

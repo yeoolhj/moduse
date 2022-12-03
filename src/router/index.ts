@@ -8,22 +8,22 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: "/example1",
     name: "example1",
-    component: () => import("../pages/example1.vue"),
+    component: () => import("../pages/Example1Page.vue"),
   },
   {
     path: "/example2",
     name: "example2",
-    component: () => import("../pages/example2.vue"),
+    component: () => import("../pages/Example2Page.vue"),
   },
   {
     path: "/example3",
     name: "example3",
-    component: () => import("../pages/example3.vue"),
+    component: () => import("../pages/Example3Page.vue"),
   },
   {
     path: "/example4",
     name: "example4",
-    component: () => import("../pages/example4.vue"),
+    component: () => import("../pages/Example4Page.vue"),
   },
 ];
 

@@ -3,13 +3,16 @@ import { ModuleRoot } from "./module";
 
 export function useDefine(
   this: ModuleRoot,
-  defineName: string,
   defines: unknown,
-  handle = useDefineHandle
+  options?: {
+    createOptionsKey?: string;
+    handle?: typeof useDefineHandle;
+  }
 ) {
+  const { createOptionsKey, handle = useDefineHandle } = options || {};
   const defs: any = defaultsDeep(
     {},
-    this.options?.[defineName],
+    createOptionsKey ? this.options?.[createOptionsKey] : undefined,
     ...(defines instanceof Array ? defines.reverse() : [defines])
   );
 
