@@ -12,7 +12,7 @@ npm install moduse
 
 #### 封装一个模块
 
-- `ModuleRoot` 定义模块时需要继承的父类
+- `ModuleRoot` 定义模块时需要继承的抽象模块
 - `use(define)` 继承自 ModuleRoot 的实例方法来配置模块定义
 - `create()` 继承自 ModuleRoot 的静态方法来实例化模块
 
@@ -296,7 +296,7 @@ function updateLastLog() {
 </script>
 ```
 
-#### 自定义的继承父类
+#### 自定义抽象模块
 
 - `createDefine` 为模块添加自定义的定义方法，通过泛型限定该定义的内容
 - `this.createUse(createOptionsKey, options?)` 为模块添加自定义的配置方法，默认绑定 createOptionsKey
@@ -427,7 +427,7 @@ function updateLastLog() {
     {
       loader: 'moduse/webpack-loader',
       options: {
-        moduleRoot: "ModuleRoot", // 继承父类名,可传入多个以“|”（如 ModuleRoot|MyModuleRoot）隔开
+        abstractModule: "ModuleRoot", // 抽象模块名,可传入多个以“|”（如 ModuleRoot|MyModuleRoot）隔开
         include: [path.resolve(__dirname, "./src/modules")]
       },
     },

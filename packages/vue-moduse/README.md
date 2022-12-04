@@ -95,7 +95,7 @@ function updateLastLog() {
 </script>
 ```
 
-在自定义继承父类中使用
+基于自定义抽象模块使用
 
 ```ts
 // modules/extends/VueModuleRoot.ts
