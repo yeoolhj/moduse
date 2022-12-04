@@ -2,13 +2,13 @@ import { createDefine } from "./define";
 import {
   DefineItem,
   DefineType,
-  OptionsPick,
-  UnionToIntersectionType,
+  ModuleCreate,
+  UnionToIntersectionType
 } from "./typings";
 import { useDefine, useDefineHandle } from "./use";
 
 export class ModuleRoot {
-  static create = createInstance();
+  static create = createInstance<keyof ModuleRoot>();
   static define = createDefine();
 
   constructor(protected options?: { [name: string]: any }) {}
@@ -38,12 +38,9 @@ export class ModuleRoot {
 }
 
 export function createInstance<K>() {
-  return function <
-    T extends typeof ModuleRoot,
-    Instance extends InstanceType<T>
-  >(this: T, options?: OptionsPick<Instance, K> & ThisType<Instance>) {
+  return function (options) {
     // eslint-disable-next-line
     const ModuleClass = this;
-    return new ModuleClass(options) as Instance;
-  };
+    return new ModuleClass(options);
+  } as ModuleCreate<K>;
 }

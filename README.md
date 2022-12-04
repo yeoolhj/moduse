@@ -1,13 +1,6 @@
 # moduse
 
-基于typescript提供模块封装的一种方案
-
-## 特征
-
-- moduse 只提供模块定义和使用的方法，定义怎样的模块由开发者自己决定
-- 模块基于 class 语法定义，拥有优秀的扩展性
-- 使用 typescript 开发，提供语法检查和推断
-- moduse 不依赖框架, 在 vue、react 中均可使用
+基于 typescript 提供对 Model-View-ViewModel(MVVM)模式中 Model 层模块化封装的一种方案
 
 ## 安装
 
@@ -17,128 +10,410 @@ npm install moduse
 
 ## 使用
 
-#### 定义第一个模块
+#### 封装一个模块
 
-假设我们需要一个模块，有如下功能：
-
-- data：存储字符串数据
-- actions: 修改 data 的值
-- helper: 提供一些帮助方法
-
-开始定义这个模块
-- `createDefine(handle)` 创建自命名的定义静态方法，通过泛型指定其类型，可传入 handle 函数编辑定义
-- `createUse(name, handle?)` 创建自命名的配置定义的实例方法，通过 name 与定义的绑定，可传入 handle 函数编辑定义
+- `ModuleRoot` 定义模块时需要继承的父类
+- `use(define)` 继承自 ModuleRoot 的实例方法来配置模块定义
+- `create()` 继承自 ModuleRoot 的静态方法来实例化模块
 
 ```ts
-// modules/extend.ts
-import {
-  createDefine,
-  createInstance,
-  DefineType,
-  ModuleRoot,
-} from "moduse";
+// modules/example1/index.ts
+import axios from "axios";
+import { ModuleRoot } from "moduse";
+import { reactive } from "vue";
 
-type IData = DefineType<string>;
-type IHelper = DefineType<(...args: any) => any>;
-type IActions = DefineType<(...args: any) => any>;
+const defaultInfo = {
+  name: "example1",
+  description: "this is single example",
+};
 
-export class MyModuleRoot extends ModuleRoot {
-  static create = createInstance<"data" | "helper" | "actions">();
-  static defineHelper = createDefine<IHelper>();
-  static defineAction = createDefine<IActions>();
+export class ExampleModule extends ModuleRoot {
+  // 配置一个双向绑定的数据模型，该示例使用基于vue3的reactive
+  state = reactive({
+    info: { ...defaultInfo },
+  });
 
-  data?: IData;
-  helper?: IHelper;
-  actions?: IActions;
+  // 配置一个请求实例
+  request = axios.create({ baseURL: "http://localhost:8000/api" });
 
-  useData = this.createUse("data");
-  useHelper = this.createUse("helper");
-  useActions = this.createUse("actions", ([key, value]) => {
-    return (...args: any) => {
-      console.log("action:", key, ...args);
-      value.call(this, ...args);
-    };
+  // 配置操作模块数据的业务逻辑
+  actions = this.use({
+    async initInfo() {
+      const res = await this.https.getInfo();
+      if (res.status === 200) {
+        this.state.info = res.data;
+      }
+    },
+    async updateInfo(info: typeof defaultInfo) {
+      this.state.info = info;
+    },
+  });
+
+  // 配置获取/设置该模块数据的请求接口
+  https = this.use({
+    getInfo() {
+      return this.request.get("/getInfo");
+    },
   });
 }
 
+// pages/Example1Page.vue
+<template>
+  <div>{{ example.state.info.name }}</div>
+  <div>{{ example.state.info.description }}</div>
+  <button @click="updateInfo">更新Info</button>
+</template>
+
+<script lang="ts" setup>
+import { ExampleModule } from "@/modules/example1";
+import { onMounted } from "vue";
+
+// 通过create方法实例化模块
+const example = ExampleModule.create();
+
+onMounted(() => {
+  example.actions.initInfo();
+});
+
+function updateInfo() {
+  example.actions.updateInfo({
+    name: "示例1",
+    description: "hello, world",
+  });
+}
+</script>
+
 ```
 
-#### 定义子模块
+#### 模块的拆分
+
+随着模块功能越来越多，需要将模块拆分成一个个小的文件
+
+- `define()` 继承自 ModuleRoot 的静态方法来定义模块属性
 
 ```ts
-// modules/example/index.ts
-import { MyModuleRoot } from "../extend";
+// modules/example2/index.ts
+import axios from "axios";
+import { ModuleRoot } from "moduse";
+import { reactive } from "vue";
+import { infoAction } from "./actions/info";
+import { logsAction } from "./actions/logs";
+import { https } from "./https";
 
-export class ExampleModule extends MyModuleRoot {
-  data = this.useData({
-    name: "moduse",
-    desc: "hello world",
+export type InfoType = typeof defaultInfo;
+
+const defaultInfo = {
+  name: "example2",
+  description: "this is single example2",
+};
+
+export class ExampleModule extends ModuleRoot {
+  state = reactive({
+    info: { ...defaultInfo },
+    logs: [] as string[],
   });
-  actions = this.useActions([action1, action2]);
-  helper = this.useHelper(helper1);
+
+  request = axios.create({ baseURL: "http://localhost:8000/api" });
+
+  // 配置操作模块数据的业务逻辑infoAction和logsAction
+  // 支持传入解构对象或者数组, vue中由于ts支持问题建议使用解构对象
+  actions = this.use({ ...infoAction, ...logsAction });
+
+  https = this.use(https);
 }
 
-const action1 = ExampleModule.defineAction({
-  updateName(name: string) {
-    this.data.name = name;
+// modules/example2/https.ts
+import { ExampleModule } from ".";
+
+// 通过模块的define方法定义模块相关业务逻辑，this指该向该模块实例
+export const https = ExampleModule.define({
+  getInfo() {
+    return this.request.get("/getInfo");
   },
 });
-const action2 = ExampleModule.defineAction({
-  updateDesc(desc: string) {
-    this.data.desc = desc;
+
+// modules/example2/actions/info.ts
+import { ExampleModule, InfoType } from "..";
+
+// 通过模块的define方法定义模块相关业务逻辑，this指该向该模块实例
+export const infoAction = ExampleModule.define({
+  async initInfo() {
+    const res = await this.https.getInfo();
+    if (res.status === 200) {
+      this.state.info = res.data;
+    }
+  },
+  async updateInfo(info: InfoType) {
+    this.state.info = info;
+  },
+});
+// modules/example2/actions/logs.ts
+import { ExampleModule } from "..";
+
+// 通过模块的define方法定义模块相关业务逻辑，this指该向该模块实例
+export const logsAction = ExampleModule.define({
+  addLog(date: Date) {
+    this.state.logs.push(date.toDateString());
+  },
+  removeLog(index: number) {
+    this.state.logs.splice(index, 1);
+  },
+  updateLog(index: number, date: Date) {
+    this.state.logs[index] = date.toDateString();
   },
 });
 
-const helper1 = ExampleModule.defineHelper({
-  getData() {
-    const data = `${this.data.name},${this.data.desc}`;
-    console.log(data);
-    return data;
-  },
-});
-```
+// pages/Example2Page.vue
+<template>
+  <div>example2</div>
+  <div>
+    <button @click="addLog">添加log</button>
+    <button @click="removeFirstLog">删除第一个log</button>
+    <button @click="updateLastLog">更新最后一个log</button>
+  </div>
+  <div>
+    <div :key="i" v-for="(date, i) in example.state.logs">
+      第{{ i + 1 }}条: {{ date }}
+    </div>
+  </div>
+</template>
 
-#### 创建子模块实例
-
-- 通过模块中定义的`create(options?)` 创建模块实例
-- 通过`options`可以重写配置定义中的值
-
-```ts
-//pages/example1.vue
-import { ExampleModule } from "@/modules/example";
+<script lang="ts" setup>
+import { ExampleModule } from "@/modules/example2";
 
 const example = ExampleModule.create();
 
-example.helper.getData(); // moduse,hello world
-example.actions.updateName("developer"); //action: updateName developer
-example.actions.updateDesc("welcome to moduse"); //action: updateDesc welcome to moduse
-example.helper.getData(); // developer,welcome to moduse
+function addLog() {
+  example.actions.addLog(new Date());
+}
+function removeFirstLog() {
+  example.actions.removeLog(0);
+}
+function updateLastLog() {
+  example.actions.updateLog(example.state.logs.length - 1, new Date());
+}
+</script>
+```
 
-//pages/example2.vue
-import { ExampleModule } from "@/modules/example";
+#### 模块的初始化配置
 
+- `createInstance` 定义模块的 create 静态方法，通过泛型声明初始化的配置
+- `createOptionsKey` this.use(define, options)中 options 的字段，让该 define 支持初始化配置
+
+```ts
+import axios from "axios";
+import { createInstance, ModuleRoot } from "moduse";
+import { reactive } from "vue";
+import { infoAction } from "./actions/info";
+import { logsAction } from "./actions/logs";
+import { https } from "./https";
+
+export type InfoType = typeof defaultInfo;
+
+const defaultInfo = {
+  name: "example",
+  description: "this is single example",
+};
+
+export class ExampleModule extends ModuleRoot {
+  // ExampleModule.create覆盖ModuleRoot.create, 通过泛型配置调用create方法时可以传入的options字段
+  // 在初始化时，可重写配置了createOptionsKey的模块定义的内容
+  static create = createInstance<"actions" | "https">();
+
+  state = reactive({
+    info: { ...defaultInfo },
+    logs: [] as string[],
+  });
+
+  request = axios.create({ baseURL: "http://localhost:8000/api" });
+
+  // 配置第二个参数options的createOptionsKey字段, 让actions可初始化配置
+  actions = this.use(
+    { ...infoAction, ...logsAction },
+    {
+      createOptionsKey: "actions",
+    }
+  );
+
+  // 通过配置第二个参数options的createOptionsKey字段, 让https可初始化配置
+  https = this.use(https, { createOptionsKey: "https" });
+}
+
+// pages/Example3Page.vue
+<template>
+  <div>{{ example.state.info.name }}</div>
+  <div>{{ example.state.info.description }}</div>
+  <div>
+    <button @click="addLog">添加log</button>
+    <button @click="removeFirstLog">删除第一个log</button>
+    <button @click="updateLastLog">更新最后一个log</button>
+  </div>
+  <div>
+    <div :key="i" v-for="(date, i) in example.state.logs">
+      第{{ i + 1 }}条: {{ date }}
+    </div>
+  </div>
+</template>
+
+<script lang="ts" setup>
+import { ExampleModule } from "@/modules/example3";
+import { AxiosResponse } from "axios";
+
+// 实例化时可配置模块的部分定义
 const example = ExampleModule.create({
-  data: {
-    desc: "welcome to example2",
-  },
   actions: {
-    updateDesc(desc) {
-      this.data.desc = `${desc}(修改于${new Date().toISOString()})`;
+    addLog(date: Date) {
+      this.state.logs.push(date.toISOString());
+    },
+    updateLog(index: number, date: Date) {
+      this.state.logs[index] = date.toISOString();
     },
   },
-  helper: {
-    getData(): string {
-      const data = `${this.data.desc},${this.data.name}`;
-      console.log(data);
-      return data;
+  https: {
+    getInfo() {
+      return Promise.resolve({
+        status: 200,
+        data: {
+          name: "example3",
+          description: "通过options进行实例的配置",
+        },
+      } as AxiosResponse<any, any>);
     },
   },
 });
 
-example.helper.getData(); // welcome to example2,example
-example.actions.updateName("example2"); // action: updateName example2
-example.actions.updateDesc("创建实例时可修改已配置的定义"); // action: updateDesc 创建实例时可修改已配置的定义
-example.helper.getData(); // 创建实例时可修改已配置的定义（修改于xxxx）,example2
+example.actions.initInfo();
+
+function addLog() {
+  example.actions.addLog(new Date());
+}
+function removeFirstLog() {
+  example.actions.removeLog(0);
+}
+function updateLastLog() {
+  example.actions.updateLog(example.state.logs.length - 1, new Date());
+}
+</script>
+```
+
+#### 自定义的继承父类
+
+- `createDefine` 为模块添加自定义的定义方法，通过泛型限定该定义的内容
+- `this.createUse(createOptionsKey, options?)` 为模块添加自定义的配置方法，默认绑定 createOptionsKey
+- 配置webpack `options.moduleRoot: "MyModuleRoot"`
+
+```ts
+import { AxiosRequestConfig, AxiosResponse } from "axios";
+import { createDefine, createInstance, DefineType, ModuleRoot } from "moduse";
+
+type IConfig = { requestConfig?: AxiosRequestConfig } & { [name: string]: any };
+type IActions = DefineType<(...args: any) => any>;
+type IHttps = DefineType<(...args: any) => Promise<AxiosResponse<any, any>>>;
+
+export class MyModuleRoot extends ModuleRoot {
+  static create = createInstance<"config" | "actions" | "https">();
+
+  // 通过createDefine方法, 为模块添加自定义的定义方法，通过泛型限定该定义的内容
+  static defineConfig = createDefine<IConfig>();
+  static defineAction = createDefine<IActions>();
+  static defineHttp = createDefine<IHttps>();
+
+  config?: IConfig;
+  actions?: IActions;
+  https?: IHttps;
+
+  // 通过this.createUse方法，为模块添加自定义的配置方法，默认绑定createOptionsKey,
+  useConfig = this.createUse("config");
+  useHttps = this.createUse("https");
+  // 配置第二个参数options的handle字段, 可添加一些默认逻辑
+  useActions = this.createUse("actions", {
+    handle: ([key, value]) => {
+      return (...args: any) => {
+        console.log("action:", key, ...args);
+        value.call(this, ...args);
+      };
+    },
+  });
+}
+
+// modules/example4/index.ts
+import axios from "axios";
+import { reactive } from "vue";
+import { infoAction } from "./actions/info";
+import { logsAction } from "./actions/logs";
+import { config } from "./config";
+import { MyModuleRoot } from "../extends/MyModuleRoot";
+import { https } from "./https";
+
+export type InfoType = { name: string; description: string };
+
+export class ExampleModule extends MyModuleRoot {
+  // 通过自定义的suseConfig方法配置config
+  config = this.useConfig(config);
+
+  state = reactive({
+    // 基于config配置初始化info
+    info: { ...this.config.defaultInfo },
+    logs: [] as string[],
+  });
+
+  // 基于config配置实例化axios
+  request = axios.create(this.config.requestConfig);
+
+  // 通过自定义的useActions方法配置actions
+  actions = this.useActions({ ...infoAction, ...logsAction });
+
+  // 通过自定义的useHttps方法配置https
+  https = this.useHttps(https);
+}
+
+// pages/Example4Page.vue
+<template>
+  <div>{{ example.state.info.name }}</div>
+  <div>{{ example.state.info.description }}</div>
+  <div>
+    <button @click="addLog">添加log</button>
+    <button @click="removeFirstLog">删除第一个log</button>
+    <button @click="updateLastLog">更新最后一个log</button>
+  </div>
+  <div>
+    <div :key="i" v-for="(date, i) in example.state.logs">
+      第{{ i + 1 }}条: {{ date }}
+    </div>
+  </div>
+</template>
+
+<script lang="ts" setup>
+import { ExampleModule } from "@/modules/example4";
+
+const example = ExampleModule.create({
+  config: {
+    defaultInfo: {
+      name: "example4",
+      description: "自定义继承模块"
+    }
+  },
+  actions: {
+    addLog(date: Date) {
+      this.state.logs.push(date.toISOString());
+    },
+    updateLog(index: number, date: Date) {
+      this.state.logs[index] = date.toISOString();
+    },
+  }
+});
+
+function addLog() {
+  example.actions.addLog(new Date());
+}
+function removeFirstLog() {
+  example.actions.removeLog(0);
+}
+function updateLastLog() {
+  example.actions.updateLog(example.state.logs.length - 1, new Date());
+}
+</script>
+
 ```
 
 ## webpack 配置
@@ -152,7 +427,7 @@ example.helper.getData(); // 创建实例时可修改已配置的定义（修改
     {
       loader: 'moduse/webpack-loader',
       options: {
-        moduleRoot: "MyModuleRoot", // 自定义的模块名,可传入多个以“|”（如 MyModuleRoot1|MyModuleRoot2）隔开
+        moduleRoot: "ModuleRoot", // 继承父类名,可传入多个以“|”（如 ModuleRoot|MyModuleRoot）隔开
         include: [path.resolve(__dirname, "./src/modules")]
       },
     },

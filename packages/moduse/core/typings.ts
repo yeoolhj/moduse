@@ -1,5 +1,12 @@
 import { ModuleRoot } from "./module";
 
+export interface ModuleCreate<K> {
+  <T extends typeof ModuleRoot, Instance extends InstanceType<T>>(
+    this: T,
+    options?: OptionsPick<Instance, K> & ThisType<Instance>
+  ): Instance;
+}
+
 export type OptionsPick<T extends ModuleRoot, K> = K extends keyof T
   ? { [name in K]?: Partial<T[name]> }
   : {

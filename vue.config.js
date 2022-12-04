@@ -8,7 +8,7 @@ module.exports = defineConfig({
       .use("moduse-loader")
       .loader("./packages/moduse/webpack-loader")
       .options({
-        moduleRoot: "ModuleRoot|MyModuleRoot",
+        moduleRoot: "ModuleRoot|MyModuleRoot|VueModuleRoot",
         include: [path.resolve(__dirname, "./src/modules")],
       })
       .before("ts-loader");

@@ -1,5 +1,6 @@
 import { defaultsDeep } from "lodash";
 import { ModuleRoot } from "moduse";
+import { ModuleCreate } from "packages/moduse/core/typings";
 import { inject, provide } from "vue";
 
 export function createHook<
@@ -7,20 +8,25 @@ export function createHook<
   T extends InstanceType<K>,
   N extends Capitalize<string>
 >(ModuleClass: K, moduleName: N) {
-  type IOptions = ConstructorParameters<K>[0] & ThisType<T>;
+  type IOptionsKey = K["create"] extends ModuleCreate<infer P> ? P : never;
+  type IOptions = IOptionsKey extends keyof T
+    ? {
+        [name in IOptionsKey]?: Partial<T[name]>;
+      }
+    : never;
 
   const moduleOptionsKey = `${moduleName}_Options`;
   let isSetted = false;
 
   // 配置模块信息
-  function setModuleOptions(options: IOptions) {
+  function setModuleOptions(options: IOptions & ThisType<T>) {
     const defineOptions = (isSetted && inject(moduleOptionsKey)) || {};
     isSetted = true;
     provide(moduleOptionsKey, defaultsDeep(options, defineOptions));
   }
 
   // 初始化模块实例
-  function initModule(options?: IOptions) {
+  function initModule(options?: IOptions & ThisType<T>) {
     const defineOptions = (isSetted && inject(moduleOptionsKey)) || {};
     const currOptions = defaultsDeep(options, defineOptions);
     const module = new ModuleClass(currOptions);

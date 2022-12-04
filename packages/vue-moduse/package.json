@@ -1,6 +1,6 @@
 {
   "name": "vue-moduse",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "use moduse with composition function in vue",
   "main": "index.ts",
   "scripts": {
@@ -13,7 +13,7 @@
     "module"
   ],
   "dependencies": {
-    "moduse": "^0.0.1"
+    "moduse": "^0.0.2"
   },
   "author": "yeoolhj",
   "repository": {

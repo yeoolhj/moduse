@@ -4407,8 +4407,9 @@
   "resolved" "https://registry.npmjs.org/module-alias/-/module-alias-2.2.2.tgz"
   "version" "2.2.2"
 
-"moduse@file:packages/moduse":
-  "resolved" "file:packages/moduse"
+"moduse@^0.0.1":
+  "integrity" "sha512-DkWPJQVQVTGelkoRsVsyeHJzUxBN0Fq3sbmpXRpmZgV+4yNurn5W0tMwYdtLHraIrXlaqqj0xNLvfAucDwx41Q=="
+  "resolved" "https://registry.npmjs.org/moduse/-/moduse-0.0.1.tgz"
   "version" "0.0.1"
   dependencies:
     "lodash" "^4.17.21"
@@ -6154,6 +6155,12 @@
     "chalk" "^4.1.0"
     "hash-sum" "^2.0.0"
     "loader-utils" "^2.0.0"
+
+"vue-moduse@file:packages/vue-moduse":
+  "resolved" "file:packages/vue-moduse"
+  "version" "0.0.1"
+  dependencies:
+    "moduse" "^0.0.1"
 
 "vue-router@^4.0.3":
   "integrity" "sha512-DYWYwsG6xNPmLq/FmZn8Ip+qrhFEzA14EI12MsMgVxvHFDYvlr4NXpVF5hrRH1wVcDP8fGi5F4rxuJSl8/r+EQ=="

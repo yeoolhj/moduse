@@ -5,14 +5,20 @@ import {
   DefineType,
   ModuleRoot
 } from "moduse";
+import { createHook } from "vue-moduse";
 
 type IConfig = { requestConfig?: AxiosRequestConfig } & { [name: string]: any };
 type IActions = DefineType<(...args: any) => any>;
 type IHttps = DefineType<(...args: any) => Promise<AxiosResponse<any, any>>>;
 
-export class MyModuleRoot extends ModuleRoot {
+export class VueModuleRoot extends ModuleRoot {
   static create = createInstance<"config" | "actions" | "https">();
-
+  static hook<T extends typeof ModuleRoot, S extends Capitalize<string>>(
+    this: T,
+    name: S
+  ) {
+    return createHook(this, name);
+  }
   // 通过createDefine方法, 为模块添加自定义的定义方法，通过泛型限定该定义的内容
   static defineConfig = createDefine<IConfig>();
   static defineAction = createDefine<IActions>();

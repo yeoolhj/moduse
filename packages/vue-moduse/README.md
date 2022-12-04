@@ -5,23 +5,104 @@
 ## 安装
 
 ```
-npm install vue-moduse
+npm install moduse vue-moduse
 ```
 
 ## 使用
 
-- 根模块中添加静态方法`hook`
-- 子模块中通过该方法生成 3 个 compositionApi
-- `set{Name}Options()` 在模块实例化之前生成默认模块配置
-- `init{Name}(options?)` 模块实例化方法, options 参数同`MyModuleRoot.create(options)`
-- `use{Name}()` 模块实例化后在子组件中可调用
-- 只能在setup中使用
+- `createHook(Module, Name)` 根据传入的 Name 生成 3 个 compositionApi
+  - `set{Name}Options()` 在模块实例化之前生成默认模块配置
+  - `init{Name}(options?)` 模块实例化方法, options 参数同`MyModuleRoot.create(options)`
+  - `use{Name}()` 模块实例化后在子组件中可调用
+  -
 
 ```ts
-//modules/extend.ts
+//modules/example5/index.ts
+...
 import { createHook } from "vue-moduse";
 
-export class MyModuleRoot extends ModuleRoot {
+
+export class ExampleModule extends MyModuleRoot {
+  ...
+}
+
+export const { useExample, initExample, setExampleOptions } = createHook(
+  ExampleModule,
+  "Example"
+);
+```
+
+页面中使用
+
+```ts
+// pages/Example5Page.vue
+<template>
+  <div>{{ example.state.info.name }}</div>
+  <div>{{ example.state.info.description }}</div>
+  <Example5Comp />
+</template>
+
+<script lang="ts" setup>
+import { initExample } from "@/modules/example5";
+import Example5Comp from "./components/Example5Comp.vue";
+
+const example = initExample({
+  config: {
+    defaultInfo: {
+      name: "example5",
+      description: "自定义继承模块",
+    },
+  },
+  actions: {
+    addLog(date: Date) {
+      this.state.logs.push(date.toISOString());
+    },
+    updateLog(index: number, date: Date) {
+      this.state.logs[index] = date.toISOString();
+    },
+  },
+});
+</script>
+
+//pages/components/Example5Comp.vue
+<template>
+  <div>
+    <button @click="addLog">添加log</button>
+    <button @click="removeFirstLog">删除第一个log</button>
+    <button @click="updateLastLog">更新最后一个log</button>
+  </div>
+  <div>
+    <div :key="i" v-for="(date, i) in example.state.logs">
+      第{{ i + 1 }}条: {{ date }}
+    </div>
+  </div>
+</template>
+
+<script lang="ts" setup>
+import { useExample } from "@/modules/example5";
+
+const example = useExample();
+
+function addLog() {
+  example.actions.addLog(new Date());
+}
+function removeFirstLog() {
+  example.actions.removeLog(0);
+}
+function updateLastLog() {
+  example.actions.updateLog(example.state.logs.length - 1, new Date());
+}
+</script>
+```
+
+在自定义继承父类中使用
+
+```ts
+// modules/extends/VueModuleRoot.ts
+...
+import { createHook } from "vue-moduse";
+
+export class VueModuleRoot extends ModuleRoot {
   static hook<T extends typeof ModuleRoot, S extends Capitalize<string>>(
     this: T,
     name: S
@@ -31,56 +112,13 @@ export class MyModuleRoot extends ModuleRoot {
   ...
 }
 
-//modules/example/index.ts
-class ExampleModule extends MyModuleRoot {
+// modules/example6/index.ts
+...
+
+export class ExampleModule extends MyModuleRoot {
   ...
 }
 
 export const { useExample, initExample, setExampleOptions } =
   ExampleModule.hook("Example");
-```
-
-页面中使用
-```ts
-//pages/example3.vue setup
-import { initExample } from "@/modules/example";
-
-const example = initExample();
-
-example.helper.getData(); // moduse,hello world
-example.actions.updateName("developer"); //action: updateName developer
-example.actions.updateDesc("welcome to moduse"); //action: updateDesc welcome to moduse
-example.helper.getData(); // developer,welcome to moduse
-
-//pages/example4.vue setup
-import { initExample } from "@/modules/example";
-import Example5 from "./example5.vue";
-
-initExample({
-  data: {
-    desc: "welcome to example2",
-  },
-  actions: {
-    updateDesc(desc) {
-      this.data.desc = `${desc}(修改于${new Date().toISOString()})`;
-    },
-  },
-  helper: {
-    getData(): string {
-      const data = `${this.data.desc},${this.data.name}`;
-      console.log(data);
-      return data;
-    },
-  },
-});
-
-//pages/example5.vue setup
-import { useExample } from "@/modules/example";
-
-const example = useExample();
-
-example.helper.getData(); // welcome to example2,example
-example.actions.updateName("example2"); // action: updateName example2
-example.actions.updateDesc("创建实例时可修改已配置的定义"); // action: updateDesc 创建实例时可修改已配置的定义
-example.helper.getData(); // 创建实例时可修改已配置的定义（修改于xxxx）,example2
 ```
