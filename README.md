@@ -12,7 +12,7 @@ npm install moduse
 
 #### 封装一个模块
 
-- `ModuleRoot` 定义模块时需要继承的抽象模块
+- `ModuleRoot` 定义模块时需要继承的抽象类
 - `use(define)` 继承自 ModuleRoot 的实例方法来配置模块定义
 - `create()` 继承自 ModuleRoot 的静态方法来实例化模块
 

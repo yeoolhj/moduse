@@ -1,6 +1,5 @@
 import { defaultsDeep } from "lodash";
-import { ModuleRoot } from "moduse";
-import { ModuleCreate } from "packages/moduse/core/typings";
+import { ModuleRoot, ModuleCreate } from "moduse";
 import { inject, provide } from "vue";
 
 export function createHook<

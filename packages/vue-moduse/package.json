@@ -1,8 +1,9 @@
 {
   "name": "vue-moduse",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "use moduse with composition function in vue",
-  "main": "index.ts",
+  "main": "lib/index.js",
+  "module": "es/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -13,8 +14,13 @@
     "module"
   ],
   "dependencies": {
-    "moduse": "^0.0.2"
+    "moduse": "^0.0.3",
+    "vue": "^3.0.0"
   },
+  "files": [
+    "es/**/*",
+    "lib/**/*"
+  ],
   "author": "yeoolhj",
   "repository": {
     "type": "git",
