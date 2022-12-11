@@ -6,8 +6,8 @@ const vue_1 = require("vue");
 function createHook(ModuleClass, moduleName) {
     const moduleOptionsKey = `${moduleName}_Options`;
     let isSetted = false;
-    // 配置模块信息
-    function setModuleOptions(options) {
+    // 设置模块默认options
+    function defaultModule(options) {
         const defineOptions = (isSetted && (0, vue_1.inject)(moduleOptionsKey)) || {};
         isSetted = true;
         (0, vue_1.provide)(moduleOptionsKey, (0, lodash_1.defaultsDeep)(options, defineOptions));
@@ -27,7 +27,7 @@ function createHook(ModuleClass, moduleName) {
     return {
         [`use${moduleName}`]: useModule,
         [`init${moduleName}`]: initModule,
-        [`set${moduleName}Options`]: setModuleOptions,
+        [`default${moduleName}`]: defaultModule,
     };
 }
 exports.createHook = createHook;

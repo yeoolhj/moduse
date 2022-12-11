@@ -1,2 +1,1 @@
-export { createDefine } from "./core/define";
-export { ModuleRoot, createInstance } from "./core/module";
+export { ModuleRoot, createDefine, createInstance, createUse, } from "./core/module";

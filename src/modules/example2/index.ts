@@ -22,7 +22,7 @@ export class ExampleModule extends ModuleRoot {
 
   // 配置操作模块数据的业务逻辑infoAction和logsAction
   // 支持传入解构对象或者数组, vue中由于ts支持问题建议使用解构对象
-  actions = this.use({ ...infoAction, ...logsAction });
+  actions = this.use([infoAction, logsAction]);
 
   // 配置https
   https = this.use(https);

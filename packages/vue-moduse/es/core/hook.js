@@ -3,8 +3,8 @@ import { inject, provide } from "vue";
 export function createHook(ModuleClass, moduleName) {
     const moduleOptionsKey = `${moduleName}_Options`;
     let isSetted = false;
-    // 配置模块信息
-    function setModuleOptions(options) {
+    // 设置模块默认options
+    function defaultModule(options) {
         const defineOptions = (isSetted && inject(moduleOptionsKey)) || {};
         isSetted = true;
         provide(moduleOptionsKey, defaultsDeep(options, defineOptions));
@@ -24,6 +24,6 @@ export function createHook(ModuleClass, moduleName) {
     return {
         [`use${moduleName}`]: useModule,
         [`init${moduleName}`]: initModule,
-        [`set${moduleName}Options`]: setModuleOptions,
+        [`default${moduleName}`]: defaultModule,
     };
 }

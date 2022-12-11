@@ -29,7 +29,7 @@ export class ExampleModule extends MyModuleRoot {
   https = this.useHttps(https);
 }
 
-export const { useExample, initExample, setExampleOptions } = createHook(
+export const { useExample, initExample, defaultExample } = createHook(
   ExampleModule,
   "Example"
 );

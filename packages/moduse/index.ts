@@ -1,3 +1,7 @@
-export { createDefine } from "./core/define";
-export { ModuleRoot, createInstance } from "./core/module";
-export type { DefineType, OptionsPick, ModuleCreate } from "./core/typings";
+export {
+  ModuleRoot,
+  createDefine,
+  createInstance,
+  createUse,
+} from "./core/module";
+export type { DefineType, CreateInstance } from "./core/typings";

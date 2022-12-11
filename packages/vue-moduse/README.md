@@ -11,7 +11,7 @@ npm install moduse vue-moduse
 ## 使用
 
 - `createHook(Module, Name)` 根据传入的 Name 生成 3 个 compositionApi
-  - `set{Name}Options()` 在模块实例化之前生成默认模块配置
+  - `default{Name}(options)` 在模块实例化之前生成默认模块配置
   - `init{Name}(options?)` 模块实例化方法, options 参数同`MyModuleRoot.create(options)`
   - `use{Name}()` 模块实例化后在子组件中可调用
   -
@@ -26,7 +26,7 @@ export class ExampleModule extends MyModuleRoot {
   ...
 }
 
-export const { useExample, initExample, setExampleOptions } = createHook(
+export const { useExample, initExample, defaultExample } = createHook(
   ExampleModule,
   "Example"
 );
@@ -119,6 +119,6 @@ export class ExampleModule extends MyModuleRoot {
   ...
 }
 
-export const { useExample, initExample, setExampleOptions } =
+export const { useExample, initExample, defaultExample } =
   ExampleModule.hook("Example");
 ```

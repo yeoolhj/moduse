@@ -1,6 +1,7 @@
 # moduse
 
 基于 typescript 提供对 Model-View-ViewModel(MVVM)模式中 Model 层模块化封装的一种方案
+- moduse的目的是为了在封装Model的同时提供typescript支持，并尽量保持语法的简洁
 
 ## 安装
 
@@ -10,9 +11,9 @@ npm install moduse
 
 ## 使用
 
-#### 封装一个模块
+#### 封装Model从继承一个ModuleRoot开始
 
-- `ModuleRoot` 定义模块时需要继承的抽象类
+- `ModuleRoot` 封装模块的抽象类
 - `use(define)` 继承自 ModuleRoot 的实例方法来配置模块定义
 - `create()` 继承自 ModuleRoot 的静态方法来实例化模块
 

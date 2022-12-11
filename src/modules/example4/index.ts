@@ -22,7 +22,7 @@ export class ExampleModule extends MyModuleRoot {
   request = axios.create(this.config.requestConfig);
 
   // 通过自定义的useActions方法配置actions
-  actions = this.useActions({ ...infoAction, ...logsAction });
+  actions = this.useActions([infoAction, logsAction]);
 
   // 通过自定义的useHttps方法配置https
   https = this.useHttps(https);

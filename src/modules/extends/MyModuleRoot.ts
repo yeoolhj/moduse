@@ -2,6 +2,7 @@ import { AxiosRequestConfig, AxiosResponse } from "axios";
 import {
   createDefine,
   createInstance,
+  createUse,
   DefineType,
   ModuleRoot
 } from "moduse";
@@ -23,10 +24,10 @@ export class MyModuleRoot extends ModuleRoot {
   https?: IHttps;
 
   // 通过this.createUse方法，为模块添加自定义的配置方法，默认绑定createOptionsKey,
-  useConfig = this.createUse("config");
-  useHttps = this.createUse("https");
+  useConfig = createUse("config");
+  useHttps = createUse("https");
   // 配置第二个参数options的handle字段, 可添加一些默认逻辑
-  useActions = this.createUse("actions", {
+  useActions = createUse<IActions>("actions", {
     handle: ([key, value]) => {
       return (...args: any) => {
         console.log("action:", key, ...args);

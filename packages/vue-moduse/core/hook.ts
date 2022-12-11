@@ -1,5 +1,5 @@
 import { defaultsDeep } from "lodash";
-import { ModuleRoot, ModuleCreate } from "moduse";
+import { ModuleRoot, CreateInstance } from "moduse";
 import { inject, provide } from "vue";
 
 export function createHook<
@@ -7,7 +7,7 @@ export function createHook<
   T extends InstanceType<K>,
   N extends Capitalize<string>
 >(ModuleClass: K, moduleName: N) {
-  type IOptionsKey = K["create"] extends ModuleCreate<infer P> ? P : never;
+  type IOptionsKey = K["create"] extends CreateInstance<infer P> ? P : never;
   type IOptions = IOptionsKey extends keyof T
     ? {
         [name in IOptionsKey]?: Partial<T[name]>;
@@ -17,8 +17,8 @@ export function createHook<
   const moduleOptionsKey = `${moduleName}_Options`;
   let isSetted = false;
 
-  // 配置模块信息
-  function setModuleOptions(options: IOptions & ThisType<T>) {
+  // 设置模块默认options
+  function defaultModule(options: IOptions & ThisType<T>) {
     const defineOptions = (isSetted && inject(moduleOptionsKey)) || {};
     isSetted = true;
     provide(moduleOptionsKey, defaultsDeep(options, defineOptions));
@@ -28,7 +28,7 @@ export function createHook<
   function initModule(options?: IOptions & ThisType<T>) {
     const defineOptions = (isSetted && inject(moduleOptionsKey)) || {};
     const currOptions = defaultsDeep(options, defineOptions);
-    const module = new ModuleClass(currOptions);
+    const module = new (ModuleClass as any)(currOptions);
     provide(moduleName, module);
     return module as T;
   }
@@ -40,17 +40,17 @@ export function createHook<
 
   type UseModule = `use${N}`;
   type InitModule = `init${N}`;
-  type SetModuleOptions = `set${N}Options`;
+  type DefaultModule = `default${N}`;
 
   return {
     [`use${moduleName}`]: useModule,
     [`init${moduleName}`]: initModule,
-    [`set${moduleName}Options`]: setModuleOptions,
+    [`default${moduleName}`]: defaultModule,
   } as {
     [name in UseModule]: typeof useModule;
   } & {
     [name in InitModule]: typeof initModule;
   } & {
-    [name in SetModuleOptions]: typeof setModuleOptions;
+    [name in DefaultModule]: typeof defaultModule;
   };
 }

@@ -4407,13 +4407,6 @@
   "resolved" "https://registry.npmjs.org/module-alias/-/module-alias-2.2.2.tgz"
   "version" "2.2.2"
 
-"moduse@^0.0.1":
-  "integrity" "sha512-DkWPJQVQVTGelkoRsVsyeHJzUxBN0Fq3sbmpXRpmZgV+4yNurn5W0tMwYdtLHraIrXlaqqj0xNLvfAucDwx41Q=="
-  "resolved" "https://registry.npmjs.org/moduse/-/moduse-0.0.1.tgz"
-  "version" "0.0.1"
-  dependencies:
-    "lodash" "^4.17.21"
-
 "mrmime@^1.0.0":
   "integrity" "sha512-hzzEagAgDyoU1Q6yg5uI+AorQgdvMCur3FcKf7NhMKWsaYg+RnbTyHRa/9IlLF9rf455MOCtcqqrQQ83pPP7Uw=="
   "resolved" "https://registry.npmjs.org/mrmime/-/mrmime-1.0.1.tgz"
@@ -6156,12 +6149,6 @@
     "hash-sum" "^2.0.0"
     "loader-utils" "^2.0.0"
 
-"vue-moduse@file:packages/vue-moduse":
-  "resolved" "file:packages/vue-moduse"
-  "version" "0.0.1"
-  dependencies:
-    "moduse" "^0.0.1"
-
 "vue-router@^4.0.3":
   "integrity" "sha512-DYWYwsG6xNPmLq/FmZn8Ip+qrhFEzA14EI12MsMgVxvHFDYvlr4NXpVF5hrRH1wVcDP8fGi5F4rxuJSl8/r+EQ=="
   "resolved" "https://registry.npmjs.org/vue-router/-/vue-router-4.1.6.tgz"
@@ -6189,7 +6176,7 @@
   dependencies:
     "is-plain-object" "5.0.0"
 
-"vue@*", "vue@^2 || ^3.2.13", "vue@^2.0.0 || ^3.0.0", "vue@^2.6.14 || ^3.2.0", "vue@^3.0.0-0 || ^2.6.0", "vue@^3.2.0", "vue@^3.2.45", "vue@3.2.45":
+"vue@*", "vue@^2 || ^3.2.13", "vue@^2.0.0 || ^3.0.0", "vue@^2.6.14 || ^3.2.0", "vue@^3.0.0", "vue@^3.0.0-0 || ^2.6.0", "vue@^3.2.0", "vue@^3.2.45", "vue@3.2.45":
   "integrity" "sha512-9Nx/Mg2b2xWlXykmCwiTUCWHbWIj53bnkizBxKai1g61f2Xit700A1ljowpTIM11e3uipOeiPcSqnmBg6gyiaA=="
   "resolved" "https://registry.npmjs.org/vue/-/vue-3.2.45.tgz"
   "version" "3.2.45"

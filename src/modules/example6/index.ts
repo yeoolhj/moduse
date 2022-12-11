@@ -28,5 +28,5 @@ export class ExampleModule extends VueModuleRoot {
   https = this.useHttps(https);
 }
 
-export const { useExample, initExample, setExampleOptions } =
+export const { useExample, initExample, defaultExample } =
   ExampleModule.hook("Example");

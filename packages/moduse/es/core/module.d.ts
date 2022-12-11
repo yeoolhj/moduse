@@ -1,20 +1,18 @@
-import { DefineItem, DefineType, ModuleCreate, UnionToIntersectionType } from "./typings";
-import { useDefineHandle } from "./use";
-export declare class ModuleRoot {
-    protected options?: {
+import { CreateInstance, DefineItem, DefineType, UseDefine } from "./typings";
+export declare abstract class ModuleRoot {
+    options?: {
         [name: string]: any;
     } | undefined;
-    static create: ModuleCreate<never>;
+    static create: CreateInstance<unknown>;
     static define: <K extends typeof ModuleRoot, Define extends DefineType<unknown>>(this: K, define: Define & ThisType<InstanceType<K>>) => Define;
     constructor(options?: {
         [name: string]: any;
     } | undefined);
-    protected use<T extends DefineType<unknown>>(this: ModuleRoot, defines: (T & ThisType<this>) | T[], options?: {
-        createOptionsKey?: string;
-        handle?: typeof useDefineHandle;
-    }): UnionToIntersectionType<T>;
-    protected createUse<This extends ModuleRoot, K extends keyof This>(this: This, createOptionsKey: K, options?: {
-        handle?: (item: [string, DefineItem<This[K]>]) => any;
-    }): <T extends DefineType<unknown>>(defines: T | T[]) => UnionToIntersectionType<T>;
+    protected use: UseDefine<DefineType<any>>;
 }
-export declare function createInstance<K>(): ModuleCreate<K>;
+export declare function createDefine<T = DefineType<unknown>>(handle?: (define: T) => T): <K extends typeof ModuleRoot, Define extends T>(this: K, define: Define & ThisType<InstanceType<K>>) => Define;
+export declare function createInstance<K>(): CreateInstance<K>;
+export declare function createUse<Define extends DefineType<any>>(name?: string, useOptions?: {
+    handle?: typeof useDefineHandle<DefineItem<Define>>;
+}): UseDefine<Define>;
+export declare function useDefineHandle<T>(this: ModuleRoot, item: [string, T]): any;
