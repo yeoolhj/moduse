@@ -1,25 +1,34 @@
 {
   "name": "moduse",
-  "version": "0.0.3",
-  "description": "A scheme based on typescript to provide modular encapsulation of model layer in Model-View-ViewModel(MVVM) pattern",
-  "main": "lib/index.js",
+  "version": "0.1.2",
+  "description": "modular framework",
+  "type": "module",
+  "main": "dist/lib/core/index.js",
+  "module": "dist/es/core/index.js",
   "scripts": {
-    "build": "tsc --outDir ./lib && tsc -m es6 --outDir ./es",
+    "build": "tsc --outDir ./dist/lib && tsc -m es6 --outDir ./dist/es",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
-    "mvvm",
-    "model",
-    "module"
+    "framework",
+    "modular",
+    "typescript"
   ],
-  "files": [
-    "es/**/*",
-    "lib/**/*",
-    "webpack-loader/**/*"
-  ],
-  "dependencies": {
-    "lodash": "^4.17.21"
+  "exports": {
+    ".": {
+      "types": "./dist/lib/core/index.d.ts",
+      "import": "./dist/es/core/index.js",
+      "require": "./dist/lib/core/index.js"
+    },
+    "./vue": {
+      "types": "./dist/lib/vue/index.d.ts",
+      "import": "./dist/es/vue/index.js",
+      "require": "./dist/lib/vue/index.js"
+    }
   },
+  "files": [
+    "dist/**/*"
+  ],
   "author": "yeoolhj",
   "repository": {
     "type": "git",

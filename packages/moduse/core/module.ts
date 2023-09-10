@@ -1,61 +1,31 @@
-import { defaultsDeep } from "lodash";
-import { CreateInstance, DefineItem, DefineType, UseDefine } from "./typings";
+import { Bus } from "./bus";
+import { eventsListener } from "./event";
+import { createField, createFuncField, useActionFields } from "./fields";
+import { createPlugin, getPlugin, usePlugin } from "./plugin";
+import { ModuleOptions } from "./typings";
 
-export abstract class ModuleRoot {
-  static create = createInstance<unknown>();
-  static define = createDefine();
+export class ModuleRoot<Options extends ModuleOptions> {
+  static config = createField;
+  static action = createFuncField;
+  static plugin = createPlugin;
 
-  constructor(public options?: { [name: string]: any }) {}
+  config: Options["config"];
+  components: Options["components"];
+  actions: Options["actions"];
 
-  protected use = createUse();
-}
-
-export function createDefine<T = DefineType<unknown>>(
-  handle?: (define: T) => T
-) {
-  return function <K extends typeof ModuleRoot, Define extends T>(
-    this: K,
-    define: Define & ThisType<InstanceType<K>>
-  ): Define {
-    return (handle?.(define) as Define) || define;
-  };
-}
-
-export function createInstance<K>() {
-  return function (options) {
-    // eslint-disable-next-line
-    const ModuleClass: any = this;
-    return new ModuleClass(options);
-  } as CreateInstance<K>;
-}
-
-export function createUse<Define extends DefineType<any>>(
-  name?: string,
-  useOptions?: {
-    handle?: typeof useDefineHandle<DefineItem<Define>>;
+  constructor(options: Options) {
+    this.config = options.config;
+    this.components = options.components;
+    this.actions = useActionFields.call(this, options.actions);
   }
-) {
-  return function (defines, options) {
-    const {
-      createOptionsKey = name,
-      handle = useOptions?.handle || useDefineHandle,
-    } = options || {};
-    const defs: any = defaultsDeep(
-      {},
-      createOptionsKey ? this.options?.[createOptionsKey] : undefined,
-      ...(defines instanceof Array ? defines.reverse() : [defines])
-    );
 
-    Object.entries(defs).forEach((item) => {
-      defs[item[0]] = handle.call(this, item as any);
-    });
+  protected bus = new Bus();
+  on = eventsListener;
 
-    return defs;
-  } as UseDefine<Define>;
-}
+  protected plugins = new Map();
+  use = usePlugin;
+  getPlugin = getPlugin;
 
-export function useDefineHandle<T>(this: ModuleRoot, item: [string, T]) {
-  const value = item[1];
-  if (value instanceof Function) return value.bind(this);
-  return value;
+  ready() {}
+  destroy() {}
 }
