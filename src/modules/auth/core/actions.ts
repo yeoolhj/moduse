@@ -13,6 +13,6 @@ export const actions = AuthModule.action({
     return this.request("/getUserInfo");
   },
   async login(data: { name: string; password: string }) {
-    return this.request("/login", { data });
+    return this.request("/login", { method: "POST", data });
   },
 });
