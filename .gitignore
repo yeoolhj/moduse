@@ -2,7 +2,8 @@
 node_modules
 
 /dist
-/moduse/dist
+/packages/moduse/es
+/packages/moduse/lib
 
 # local env files
 .env.local

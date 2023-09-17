@@ -1,12 +1,12 @@
 {
   "name": "moduse",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "modular framework",
   "type": "module",
-  "main": "dist/lib/core/index.js",
-  "module": "dist/es/core/index.js",
+  "main": "lib/core/index.js",
+  "module": "es/core/index.js",
   "scripts": {
-    "build": "tsc --outDir ./dist/lib && tsc -m es6 --outDir ./dist/es",
+    "build": "tsc --outDir ./lib && tsc -m es6 --outDir ./es",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
@@ -16,18 +16,19 @@
   ],
   "exports": {
     ".": {
-      "types": "./dist/lib/core/index.d.ts",
-      "import": "./dist/es/core/index.js",
-      "require": "./dist/lib/core/index.js"
+      "types": "./lib/core/index.d.ts",
+      "import": "./es/core/index.js",
+      "require": "./lib/core/index.js"
     },
     "./vue": {
-      "types": "./dist/lib/vue/index.d.ts",
-      "import": "./dist/es/vue/index.js",
-      "require": "./dist/lib/vue/index.js"
+      "types": "./lib/vue/index.d.ts",
+      "import": "./es/vue/index.js",
+      "require": "./lib/vue/index.js"
     }
   },
   "files": [
-    "dist/**/*"
+    "lib/**/*",
+    "es/**/*"
   ],
   "author": "yeoolhj",
   "repository": {

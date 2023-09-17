@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { reactive } from "vue";
 import { useLoginModule } from "..";
-const loginModule = useLoginModule();
 
+const loginModule = useLoginModule();
 const loginForm = reactive({
   username: "",
   password: "",

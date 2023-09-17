@@ -1,9 +1,10 @@
 <template>
-  <loginModule.components.LoginPage />
+  <login.components.LoginPage />
 </template>
 
 <script setup lang="ts">
-import * as LoginModule from "./modules/login";
+import * as AuthModule from "./modules/auth";
 
-const loginModule = LoginModule.create();
+const auth = AuthModule.create();
+const { login } = auth.modules;
 </script>
