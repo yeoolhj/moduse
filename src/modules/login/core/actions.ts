@@ -1,6 +1,6 @@
-import { LoginModule } from "../extends";
+import { LoginModule } from "../LoginModule";
 
-export const actions = LoginModule.action({
+export const actions = LoginModule.defineActions({
   pwdLogin(data: { username: string; password: string }) {
     if (!data.username) {
       return Promise.reject("请输入姓名");

@@ -1,6 +1,6 @@
-import { AuthModule } from "./extends";
+import { AuthModule } from "../AuthModule";
 
-export const actions = AuthModule.action({
+export const actions = AuthModule.defineActions({
   async init() {
     const res = await this.actions.initUserInfo();
     if (res.data) {
@@ -10,6 +10,7 @@ export const actions = AuthModule.action({
     }
   },
   async initUserInfo() {
+    console.log(this.utils.getToken());
     return this.request("/getUserInfo");
   },
   async login(data: { name: string; password: string }) {

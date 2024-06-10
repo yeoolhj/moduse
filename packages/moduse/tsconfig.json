@@ -13,5 +13,5 @@
       "vue": ["../../node_modules/@vue/runtime-core/dist/runtime-core"]
     }
   },
-  "files": ["./src/core/index.ts", "./src/vue/index.ts"]
+  "files": ["./src/index.ts"]
 }

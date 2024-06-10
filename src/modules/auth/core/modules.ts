@@ -1,8 +1,8 @@
-import { AuthModule } from "./extends";
-import * as LoginModule from "../../login";
+import { createLoginModule } from "@/modules/login";
+import { AuthModule } from "../AuthModule";
 
-export const modules = AuthModule.module({
+export const modules = AuthModule.defineModules({
   login() {
-    return LoginModule.create();
+    return createLoginModule();
   },
 });

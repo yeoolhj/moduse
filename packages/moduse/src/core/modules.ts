@@ -1,8 +1,8 @@
-import { ClassType, ModuleInstance } from "./typings";
+import { ClassType, ModuleInstance } from "../types";
 
 type CreateModules = Record<string, () => ModuleInstance>;
 
-export function createModules<
+export function defineModules<
   T extends ClassType<any>,
   M extends CreateModules
 >(this: T, modules: M & ThisType<InstanceType<T>>) {
@@ -11,8 +11,9 @@ export function createModules<
 
 export function useModules(this: ModuleInstance, modules: CreateModules = {}) {
   const submodules: any = {};
+  this.modules = {};
   Object.entries(modules).forEach(([key, value]) => {
-    submodules[key] = value.call(this);
+    this.modules[key] = submodules[key] = value.call(this);
   });
   return submodules;
 }

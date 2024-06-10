@@ -1,7 +1,4 @@
-import { createFuncFields } from "./comm/fields";
-import { AnyFun, Filter, ModuleInstance } from "./typings";
-
-export const createActions = createFuncFields;
+import { AnyFun, Filter, ModuleInstance } from "../types";
 
 export function useActions(
   this: ModuleInstance,
@@ -21,7 +18,10 @@ export function useActions(
       }
       funcResult
         .then((res: any) => this.bus.emit(`${key}:success`, res))
-        .catch((err: any) => this.bus.emit(`${key}:fail`, err));
+        .catch((err: any) => {
+          console.error(err);
+          this.bus.emit(`${key}:fail`, err);
+        });
       return funcResult;
     };
   });

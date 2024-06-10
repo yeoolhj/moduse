@@ -1,7 +1,7 @@
 {
   "name": "moduse",
-  "version": "0.1.3",
-  "description": "modular framework",
+  "version": "0.3.1",
+  "description": "A Progressive Modular Development Framework Based on Vue3",
   "type": "module",
   "main": "lib/core/index.js",
   "module": "es/core/index.js",
@@ -10,20 +10,16 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
-    "framework",
+    "vue3",
     "modular",
+    "progressive",
     "typescript"
   ],
   "exports": {
     ".": {
-      "types": "./lib/core/index.d.ts",
-      "import": "./es/core/index.js",
-      "require": "./lib/core/index.js"
-    },
-    "./vue": {
-      "types": "./lib/vue/index.d.ts",
-      "import": "./es/vue/index.js",
-      "require": "./lib/vue/index.js"
+      "types": "./lib/index.d.ts",
+      "import": "./es/index.js",
+      "require": "./lib/index.js"
     }
   },
   "files": [

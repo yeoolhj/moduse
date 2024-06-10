@@ -3,10 +3,10 @@
 </template>
 
 <script setup lang="ts">
-import * as AuthModule from "./modules/auth";
+import { createAuthModule } from "./modules/auth";
 import LoginForm from "./views/LoginForm.vue";
 
-const auth = AuthModule.create({
+const auth = createAuthModule({
   components: {
     LoginPage: LoginForm,
   },
